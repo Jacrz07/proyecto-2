@@ -39,4 +39,6 @@ class Inventary(BaseModel):
     def validate_sold_quantity(self):
         if self.sold_quantity > self.initial_quantity:
             raise ValueError("la cantidad vendida no puede ser mayor a la cantidad inicial")
+        if self.sold_quantity == self.initial_quantity:
+            self.active = False
         return self

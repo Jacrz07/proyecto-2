@@ -15,7 +15,8 @@ async def get_catalogs() -> list[Catalog]:
             doc["id"] = str(doc["_id"])
             del doc["_id"]
             catalog = Catalog(**doc)
-            catalogs.append(catalog)    
+            if catalog.active:
+                catalogs.append(catalog)    
         return catalogs
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error fetching catalogs: {str(e)}")
@@ -119,7 +120,8 @@ async def get_catalog_by_filter(
             doc["id"] = str(doc["_id"])
             del doc["_id"]
             catalog = Catalog(**doc)
-            catalogs.append(catalog)
+            if catalog.active:
+                catalogs.append(catalog)
         return catalogs
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
