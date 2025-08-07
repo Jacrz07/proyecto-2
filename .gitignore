@@ -1,4 +1,40 @@
-__pycache__/
-.env
+.pytest_cache/
 proyecto2env/
 secrets/
+## ignore files for fastapi project
+# Python cache files
+__pycache__/
+*.py[cod]
+# Virtual environment
+venv/
+# Environment variables
+.env
+# Database files
+*.db
+# Railway configuration backups and local configs
+railway.json.backup
+.railway/
+# Logs
+*.log
+# IDE specific files
+.vscode/
+.idea/
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+# Coverage reports
+htmlcov/
+.coverage
+# Migrations
+migrations/
+# Static files
+static/
+# Media files
+media/
+# Docker files
+Dockerfile
+docker-compose.yml
+# FastAPI specific files
+# *.json  # Commented out to allow railway.json
+*.yaml
+# Secret files specifically
+secrets/*.json
