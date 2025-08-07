@@ -27,7 +27,7 @@ jobs:
             python-version : "3.13"
 
         - name: Install libraries
-          run:  
+          run: |
             python -m pip install --upgrade pip
             pip install -r requirements.txt
 
@@ -40,7 +40,7 @@ jobs:
             FIREBASE_CREDENTIALS_BASE64: ${{ secrets.FIREBASE_CREDENTIALS_BASE64 }}
             RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
           run:  
-            python -c "from main import app; print("FASTAPI app imported successfully") "
+            python -c "from main import app; print('FASTAPI app imported successfully') "
 
         - name: Run tests
           env: 
@@ -51,6 +51,6 @@ jobs:
             FIREBASE_CREDENTIALS_BASE64: ${{ secrets.FIREBASE_CREDENTIALS_BASE64 }}
             RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
           run:  
-            python -c "from main import app; print("FASTAPI app imported successfully") "
+            pytest -v test_database.py
 
             
