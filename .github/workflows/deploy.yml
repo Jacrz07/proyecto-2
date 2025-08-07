@@ -94,5 +94,5 @@ jobs:
             railway up --service gamestore || \
             railway up --service backend || \
             (echo "creating new service and deploying" && railway up)
-
+            
             
