@@ -2,6 +2,10 @@ import os
 import logging
 import firebase_admin
 import requests
+import base64
+import os
+import json
+from dotenv import load_dotenv
 from fastapi import HTTPException
 from firebase_admin import credentials, auth as firebase_auth
 
@@ -11,12 +15,36 @@ from models.login import Login
 from utils.security import create_jwt_token
 from utils.mongodb import get_collection
 
+load_dotenv()
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-cred = credentials.Certificate("secrets/proyecto-2.json")
-firebase_admin.initialize_app(cred)
+def initializate_firebase():
+    if firebase_admin._apps: 
+        return 
+    
+    try:
+        firebase_credentials_base64 = os.getenv("FIREBASE_CREDENTIALS_BASE64")
 
+        if firebase_credentials_base64:
+            firebase_credentials_json = base64.b64decode(firebase_credentials_base64).decode("utf-8")
+            firebase_creds = json.loads(firebase_credentials_json)
+            cred = credentials.Certificate(firebase_creds)
+            firebase_admin.initialize_app(cred)
+            logger.info("Firebase initializated with enviroment variable credentials")
+
+        else:
+            cred = credentials.Certificate("secrets/proyecto-2.json")
+            firebase_admin.initialize_app(cred)
+            logger.info("Firebase initializated with JSON file")
+
+    except Exception as e:
+        logger.error(f"Failed to initialize Firebase: {e}")
+        raise HTTPException(status_code=500, detail=f"Firebase configuration error: {str(e)}")
+
+
+initializate_firebase()
 
 async def create_user( user: User ) -> User:
 
