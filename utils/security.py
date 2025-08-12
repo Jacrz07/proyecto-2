@@ -2,6 +2,7 @@ import os
 import secrets
 import hashlib
 import base64
+from grpc import StatusCode
 import jwt
 
 from datetime import datetime, timedelta
@@ -49,11 +50,11 @@ def validateuser(func):
         
         authorization: str = request.headers.get("Authorization")
         if not authorization:
-            raise HTTPException(status_code=400, detail="Authorization header missing")
+            raise HTTPException(status_code=401, detail="Authorization header missing")
         
         schema, token = authorization.split()
         if schema.lower() != "bearer":
-            raise HTTPException(status_code=400, detail="Invalid auth schema")
+            raise HTTPException(status_code=401, detail="Invalid auth schema")
         
         try:
             payload = jwt.decode( token, SECRET_KEY, algorithms=["HS256"])
@@ -119,8 +120,11 @@ def validateadmin(func):
             if datetime.utcfromtimestamp(exp) < datetime.utcnow():
                 raise HTTPException( status_code=401 , detail="Expired token" )
             
-            if not active or not admin:
-                raise HTTPException( status_code=401 , detail="Inactive user or not admin" ) 
+            if not active:
+                raise HTTPException( status_code=403 , detail="Inactive user" ) 
+            
+            if not admin:
+                raise HTTPException( status_code=403, detail="not admin")
             
             request.state.email = email
             request.state.name = name
