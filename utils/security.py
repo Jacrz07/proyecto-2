@@ -72,7 +72,7 @@ def validateuser(func):
                 raise HTTPException( status_code=401 , detail="Expired token" )
             
             if not active:
-                raise HTTPException( status_code=401 , detail="Inactive user" ) 
+                raise HTTPException( status_code=403 , detail="Inactive user" ) 
             
             request.state.email = email
             request.state.name = name
@@ -96,11 +96,11 @@ def validateadmin(func):
         
         authorization: str = request.headers.get("Authorization")
         if not authorization:
-            raise HTTPException(status_code=400, detail="Authorization header missing")
+            raise HTTPException(status_code=403, detail="Authorization header missing")
         
         schema, token = authorization.split()
         if schema.lower() != "bearer":
-            raise HTTPException(status_code=400, detail="Invalid auth schema")
+            raise HTTPException(status_code=401, detail="Invalid auth schema")
         
         try:
             payload = jwt.decode( token, SECRET_KEY, algorithms=["HS256"])
