@@ -1,6 +1,6 @@
 from models.catalogs import Catalog
 from utils.mongodb import get_collection
-from pipelines.catalog_pipelines import get_catalog_sales_pipeline, get_discount_catalogs_pipeline
+from pipelines.catalog_pipelines import get_catalog_sales_pipeline, get_discount_catalogs_pipeline, validate_catalog_is_assigned_pipeline
 from fastapi import HTTPException
 from bson import ObjectId
 
@@ -137,17 +137,22 @@ async def get_discount_catalogs() -> list:
 
 
 async def deactivate_catalog(catalog_id: str) -> Catalog:
-
     try:
-        result = coll.update_one(
-            {"_id": ObjectId(catalog_id)},
-            {"$set": {"active": False}}
-        )
-        if result.modified_count == 0:
-            raise HTTPException(status_code=404, detail="Catalog not found")
+        pipeline = validate_catalog_is_assigned_pipeline(catalog_id)
+        assigned = list(coll.aggregate(pipeline))
 
-        return await get_catalog_by_id(catalog_id)
-    except HTTPException:
-        raise
+        if assigned is None:
+            raise HTTPException(status_code=404, detail="Catalog type not found")
+
+        if assigned[0]["number_of_products"] > 0:
+            coll.update_one(
+                {"_id": ObjectId(catalog_id)},
+                {"$set": {"active": False}}
+            )
+            return {"message": "Catalog is assigned to products and has been deactivated"}
+        else:
+            coll.delete_one({"_id": ObjectId(catalog_id)})
+            return {"message": "Catalog type deleted successfully"}
+        
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error deactivating catalog: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error deactivating catalog type: {str(e)}")
