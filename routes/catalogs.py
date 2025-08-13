@@ -23,8 +23,8 @@ async def create_catalog_endpoint(request: Request, catalog: Catalog) -> Catalog
     return await create_catalog(catalog)
 
 
-@router.get("/catalogs", response_model= list[Catalog], tags=["Catalogs"])
-async def get_catalogs_endpoint() -> list[Catalog]:
+@router.get("/catalogs", response_model= list, tags=["Catalogs"])
+async def get_catalogs_endpoint() -> list:
     return await get_catalogs()
 
 

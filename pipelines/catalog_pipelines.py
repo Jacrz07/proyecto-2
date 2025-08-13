@@ -1,3 +1,49 @@
+def get_catalogs_pipeline() -> list:
+    return [
+        {
+            "$addFields": {
+                "id": { "$toString": "$_id" }
+            }
+        },
+        {
+            "$lookup": {
+                "from": "inventary",
+                "localField": "id",
+                "foreignField": "id_catalog",
+                "as": "result"
+            }
+        },
+        {
+            "$group": {
+                "_id": {
+                    "id": "$id",
+                    "name": "$name",
+                    "plataform": "$plataform",
+                    "release_date": "$release_date",
+                    "active": "$active",
+                    "cost" : "$cost",
+                    "discount" : "$discount"
+                },
+                "number_of_products": {
+                    "$sum": { "$size": "$result" }
+                }
+            }
+        },
+        {
+            "$project": {
+                "_id": 0,
+                "id": "$_id.id",
+                "name": "$_id.name",
+                "plataform": "$_id.plataform",
+                "release_date": "$_id.release_date",
+                "active": "$_id.active",
+                "cost" : "$_id.cost",
+                "discount" : "$_id.discount",
+                "number_of_products": 1
+            }
+        }
+    ]
+
 
 def get_catalog_sales_pipeline() -> list:
     return [

@@ -1,22 +1,17 @@
 from models.catalogs import Catalog
 from utils.mongodb import get_collection
-from pipelines.catalog_pipelines import get_catalog_sales_pipeline, get_discount_catalogs_pipeline, validate_catalog_is_assigned_pipeline
+from pipelines.catalog_pipelines import get_catalog_sales_pipeline, get_discount_catalogs_pipeline, validate_catalog_is_assigned_pipeline, get_catalogs_pipeline
 from fastapi import HTTPException
 from bson import ObjectId
 
 coll = get_collection("catalogs")
 coll_inventary = get_collection("inventary")
 
-async def get_catalogs() -> list[Catalog]:
-
+async def get_catalogs() -> list:
     try:
-        catalogs = []
-        for doc in coll.find():
-            doc["id"] = str(doc["_id"])
-            del doc["_id"]
-            catalog = Catalog(**doc)
-            if catalog.active:
-                catalogs.append(catalog)    
+        pipeline = get_catalogs_pipeline()
+        catalogs = list(coll.aggregate(pipeline))
+
         return catalogs
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error fetching catalogs: {str(e)}")
