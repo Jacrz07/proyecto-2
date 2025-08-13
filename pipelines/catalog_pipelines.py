@@ -105,7 +105,7 @@ def get_discount_catalogs_pipeline() -> list:
         }}
     ]
 
-def validate_catalog_is_assigned_pipeline() -> list:
+def validate_catalog_is_assigned_pipeline(id) -> list:
     return [
         {
             "$match": {
