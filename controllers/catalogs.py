@@ -131,7 +131,7 @@ async def get_discount_catalogs() -> list:
         raise HTTPException(status_code=500, detail=f"Error fetching discount catalogs: {str(e)}")
 
 
-async def deactivate_catalog(catalog_id: str) -> Catalog:
+async def deactivate_catalog(catalog_id: str) -> dict:
     try:
         pipeline = validate_catalog_is_assigned_pipeline(catalog_id)
         assigned = list(coll.aggregate(pipeline))

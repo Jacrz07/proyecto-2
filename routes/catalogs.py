@@ -60,8 +60,8 @@ async def get_discount_catalogs_endpoint() -> list:
 
 
 
-@router.delete("/catalogs/{catalog_id}", response_model= Catalog, tags=["Catalogs"])
+@router.delete("/catalogs/{catalog_id}", response_model= dict, tags=["Catalogs"])
 @validateadmin
-async def deactivate_catalog_endpoint(request: Request, catalog_id: str) -> Catalog:
+async def deactivate_catalog_endpoint(request: Request, catalog_id: str) -> dict:
     return await deactivate_catalog(catalog_id)
 
