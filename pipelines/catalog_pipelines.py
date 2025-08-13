@@ -1,3 +1,5 @@
+from bson import ObjectId
+
 def get_catalogs_pipeline() -> list:
     return [
         {
@@ -105,6 +107,11 @@ def get_discount_catalogs_pipeline() -> list:
 
 def validate_catalog_is_assigned_pipeline() -> list:
     return [
+        {
+            "$match": {
+                "_id": ObjectId(id),
+            }
+        },
         {
             "$addFields": {
                 "id": {"$toString": "$_id"}
