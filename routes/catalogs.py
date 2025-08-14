@@ -10,7 +10,7 @@ from controllers.catalogs import (
     get_catalog_by_filter,
     get_discount_catalogs
 )
-from utils.security import validateadmin
+from utils.security import validateadmin, validateuser
 from utils.mongodb import get_collection
 
 coll = get_collection("catalogs")
@@ -18,7 +18,7 @@ coll = get_collection("catalogs")
 router = APIRouter()
 
 @router.post("/catalogs", response_model=Catalog, tags= ["Catalogs"])
-@validateadmin
+@validateuser
 async def create_catalog_endpoint(request: Request, catalog: Catalog) -> Catalog:
     return await create_catalog(catalog)
 
@@ -34,13 +34,13 @@ async def get_catalog_by_id_endpoint(catalog_id: str) -> Catalog:
 
 
 @router.put("/catalogs/{catalog_id}", response_model= Catalog, tags=["Catalogs"])
-@validateadmin
+@validateuser
 async def update_catalog_endpoint(request: Request, catalog_id: str, catalog: Catalog) -> Catalog:
     return await update_catalog(catalog_id, catalog)
 
 
 @router.get("/sales/catalogs", response_model= list, tags=["Catalogs"])
-@validateadmin
+@validateuser
 async def get_catalogs_sales_endpoint(request: Request) -> list:
     return await get_catalog_sales()
 
@@ -61,7 +61,7 @@ async def get_discount_catalogs_endpoint() -> list:
 
 
 @router.delete("/catalogs/{catalog_id}", response_model= dict, tags=["Catalogs"])
-@validateadmin
+@validateuser
 async def deactivate_catalog_endpoint(request: Request, catalog_id: str) -> dict:
     return await deactivate_catalog(catalog_id)
 
